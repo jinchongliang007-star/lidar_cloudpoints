@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点云处理仿真系统教学材料</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --code-bg: #f5f5f5;
+            --border-color: #e0e0e0;
+            --link-color: #0066cc;
+        }
+
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            @page {
+                margin: 2cm;
+                size: A4;
+            }
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            pre, table, img {
+                page-break-inside: avoid;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        h1 {
+            font-size: 2em;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-top: 40px;
+            color: #2c3e50;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 35px;
+            color: #34495e;
+        }
+
+        h3 {
+            font-size: 1.25em;
+            margin-top: 25px;
+            color: #2c3e50;
+        }
+
+        h4 {
+            font-size: 1.1em;
+            margin-top: 20px;
+            color: #34495e;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        blockquote {
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+        }
+
+        ul, ol {
+            padding-left: 25px;
+            margin: 15px 0;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #eee;
+            margin: 40px 0;
+        }
+
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .print-button:hover {
+            background-color: #2980b9;
+        }
+
+        .toc {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 30px 0;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin: 8px 0;
+        }
+
+        .toc a {
+            color: #495057;
+        }
+
+        em {
+            color: #666;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">打印 / 导出 PDF</button>
+
+    <h1 id="_1">点云处理仿真系统教学材料</h1>
+<h2 id="_2">第一章：教学概述</h2>
+<h3 id="11">1.1 教学目标</h3>
+<p>通过本系统的学习，学生将能够：</p>
+<ol>
+<li><strong>理解激光雷达点云的生成原理</strong></li>
+<li>掌握光线投射和碰撞检测</li>
+<li>理解点云的空间分布特征</li>
+<li>
+<p>了解真实传感器的噪声特性</p>
+</li>
+<li>
+<p><strong>掌握点云下采样算法</strong></p>
+</li>
+<li>学习体素网格下采样</li>
+<li>理解采样密度与精度的权衡</li>
+<li>
+<p>掌握参数选择原则</p>
+</li>
+<li>
+<p><strong>学习点云聚类算法</strong></p>
+</li>
+<li>理解 DBSCAN 密度聚类原理</li>
+<li>掌握聚类参数的调优方法</li>
+<li>
+<p>学习边界框计算</p>
+</li>
+<li>
+<p><strong>了解点云处理流程</strong></p>
+</li>
+<li>原始点云 → 下采样 → 聚类的完整流程</li>
+<li>各阶段的作用和参数影响</li>
+</ol>
+<h3 id="12">1.2 适用对象</h3>
+<ul>
+<li>自动驾驶技术学习者</li>
+<li>机器人感知工程师</li>
+<li>计算机视觉研究者</li>
+<li>对点云处理感兴趣的学生</li>
+</ul>
+<h3 id="13">1.3 先修知识</h3>
+<table>
+<thead>
+<tr>
+<th>知识领域</th>
+<th>要求程度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python 编程</td>
+<td>基础</td>
+<td>能够阅读和理解 Python 代码</td>
+</tr>
+<tr>
+<td>线性代数</td>
+<td>基础</td>
+<td>向量、矩阵运算</td>
+</tr>
+<tr>
+<td>数据结构</td>
+<td>基础</td>
+<td>树结构、空间索引</td>
+</tr>
+<tr>
+<td>概率统计</td>
+<td>可选</td>
+<td>理解噪声和统计特性</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_3">第二章：点云生成原理</h2>
+<h3 id="21">2.1 激光雷达工作原理</h3>
+<p><strong>LiDAR</strong> (Light Detection and Ranging) 通过发射激光脉冲并测量返回时间来确定距离：</p>
+<pre><code>距离 = (光速 × 飞行时间) / 2
+</code></pre>
+<h4 id="lidar">机械旋转式 LiDAR</h4>
+<pre><code>        ┌─────────────────┐
+        │    旋转头部      │ ← 水平360°旋转
+        │  ┌───────────┐  │
+        │  │ 激光单元   │  │ ← 多线束垂直分布
+        │  └───────────┘  │
+        ├─────────────────┤
+        │    电机传动      │
+        └─────────────────┘
+</code></pre>
+<h3 id="22">2.2 射线碰撞检测</h3>
+<p>本系统使用光线投射模拟激光雷达：</p>
+<h4 id="-aabb-slab">射线-AABB 相交（Slab 方法）</h4>
+<pre><code class="language-python">def ray_intersect_box(ray, box):
+    &quot;&quot;&quot;
+    Slab 方法：将 AABB 看作三个无限 Slab 的交集
+
+    对每个轴 (X, Y, Z)：
+    1. 计算射线进入和离开该 Slab 的参数 t1, t2
+    2. 更新全局的 tmin = max(tmin, t1)
+    3. 更新全局的 tmax = min(tmax, t2)
+    4. 如果 tmin &gt; tmax，无交点
+    &quot;&quot;&quot;
+    for i in range(3):
+        t1 = (box.min[i] - ray.origin[i]) / ray.direction[i]
+        t2 = (box.max[i] - ray.origin[i]) / ray.direction[i]
+        if t1 &gt; t2: t1, t2 = t2, t1
+        tmin = max(tmin, t1)
+        tmax = min(tmax, t2)
+        if tmin &gt; tmax: return False
+    return True, tmin
+</code></pre>
+<h4 id="-">射线-圆柱相交</h4>
+<pre><code class="language-python">def ray_intersect_cylinder(ray, cylinder):
+    &quot;&quot;&quot;
+    圆柱方程: x² + z² = r²
+    射线: P(t) = origin + t * direction
+
+    代入得到二次方程:
+    (dx² + dz²)t² + 2(ox·dx + oz·dz)t + (ox² + oz² - r²) = 0
+
+    判别式 &gt;= 0 时有交点
+    &quot;&quot;&quot;
+    a = dx**2 + dz**2
+    b = 2 * (ox*dx + oz*dz)
+    c = ox**2 + oz**2 - r**2
+
+    discriminant = b**2 - 4*a*c
+    if discriminant &lt; 0:
+        return False, inf
+
+    t = (-b - sqrt(discriminant)) / (2*a)
+    # 检查高度限制
+</code></pre>
+<h3 id="23">2.3 真实感噪声模拟</h3>
+<p>真实激光雷达存在多种误差源：</p>
+<pre><code class="language-python"># 1. 距离相关的测量噪声
+noise_std = base_noise + distance * noise_factor
+
+# 2. 入射角影响检测概率
+if cos_incidence &lt; threshold:
+    dropout_probability += 0.3
+
+# 3. 随机 dropout（模拟反射率差异）
+if random() &lt; dropout_prob:
+    continue  # 丢弃该点
+
+# 4. 角度抖动（机械旋转不稳定性）
+jitter = normal(0, noise_std * 0.5)
+</code></pre>
+<hr />
+<h2 id="_4">第三章：点云下采样</h2>
+<h3 id="31">3.1 为什么需要下采样</h3>
+<p>原始点云通常非常密集（每秒数十万点），直接处理效率低。下采样可以：
+- 减少数据量，加速后续处理
+- 去除冗余信息
+- 均匀化点云密度</p>
+<h3 id="32">3.2 体素网格下采样</h3>
+<h4 id="_5">算法原理</h4>
+<pre><code>1. 将空间划分为大小为 v 的立方体（体素）
+2. 计算每个点所属的体素索引: (x/v, y/v, z/v)
+3. 同一体素内的点取质心作为代表点
+</code></pre>
+<h4 id="_6">代码实现</h4>
+<pre><code class="language-python">def voxel_grid_downsample(points, voxel_size):
+    &quot;&quot;&quot;
+    体素网格下采样
+
+    参数:
+        points: Nx3 点云数组
+        voxel_size: 体素边长（米）
+
+    返回:
+        降采样后的点云
+    &quot;&quot;&quot;
+    # 计算边界
+    min_bound = np.min(points, axis=0)
+
+    # 计算体素索引
+    voxel_indices = np.floor((points - min_bound) / voxel_size).astype(np.int32)
+
+    # 创建唯一体素键
+    shift = 20000  # 处理负数
+    voxel_keys = ((voxel_indices[:, 0] + shift) * 40001 * 40001 +
+                  (voxel_indices[:, 1] + shift) * 40001 +
+                  (voxel_indices[:, 2] + shift))
+
+    # 找出唯一体素
+    unique_keys, inverse = np.unique(voxel_keys, return_inverse=True)
+
+    # 计算每个体素的质心
+    num_voxels = len(unique_keys)
+    downsampled = np.zeros((num_voxels, 3))
+    for i in range(3):
+        downsampled[:, i] = (np.bincount(inverse, weights=points[:, i]) /
+                            np.bincount(inverse))
+
+    return downsampled
+</code></pre>
+<h4 id="_7">参数选择</h4>
+<table>
+<thead>
+<tr>
+<th>体素大小</th>
+<th>效果</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.05m</td>
+<td>轻微降采样，细节保留好</td>
+<td>高精度需求</td>
+</tr>
+<tr>
+<td>0.1-0.2m</td>
+<td>中等降采样，平衡精度和效率</td>
+<td>通用场景</td>
+</tr>
+<tr>
+<td>0.5m+</td>
+<td>大幅降采样，只保留主要结构</td>
+<td>快速预览</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33">3.3 随机下采样</h3>
+<pre><code class="language-python">def random_downsample(points, target_count):
+    &quot;&quot;&quot;
+    随机均匀采样
+
+    优点: 实现简单，速度极快
+    缺点: 可能丢失重要特征点
+    &quot;&quot;&quot;
+    indices = np.random.choice(len(points), target_count, replace=False)
+    return points[indices]
+</code></pre>
+<hr />
+<h2 id="_8">第四章：点云聚类</h2>
+<h3 id="41">4.1 聚类的目的</h3>
+<p>将点云分割成有意义的簇（如不同的物体），是目标检测和跟踪的基础。</p>
+<h3 id="42-dbscan">4.2 DBSCAN 算法</h3>
+<h4 id="_9">算法原理</h4>
+<p>DBSCAN (Density-Based Spatial Clustering) 是基于密度的聚类算法：</p>
+<pre><code>核心概念：
+- ε-邻域：以点 p 为中心，半径 ε 的球内所有点
+- 核心点：ε-邻域内至少有 min_samples 个点
+- 边界点：不是核心点，但在某核心点的邻域内
+- 噪声点：既不是核心点也不是边界点
+
+聚类过程：
+1. 找出所有核心点
+2. 从未访问的核心点开始，创建新簇
+3. 将该点的 ε-邻域内的所有核心点加入簇
+4. 递归扩展，直到没有新的核心点可加入
+5. 重复直到所有核心点都被访问
+</code></pre>
+<h4 id="_10">代码实现</h4>
+<pre><code class="language-python">from scipy.spatial import cKDTree
+
+def dbscan_clustering(points, eps, min_samples):
+    &quot;&quot;&quot;
+    DBSCAN 聚类（KDTree 加速版）
+
+    参数:
+        points: Nx3 点云数组
+        eps: 邻域半径（米）
+        min_samples: 核心点最小邻居数
+
+    返回:
+        labels: 聚类标签数组，-1 表示噪声
+    &quot;&quot;&quot;
+    num_points = len(points)
+    labels = np.full(num_points, -2, dtype=np.int32)  # -2: 未访问
+
+    # 使用 KDTree 加速邻域搜索
+    tree = cKDTree(points)
+    neighbors_list = tree.query_ball_point(points, eps)
+
+    cluster_id = 0
+
+    for i in range(num_points):
+        if labels[i] != -2:
+            continue
+
+        neighbors = neighbors_list[i]
+
+        if len(neighbors) &lt; min_samples:
+            labels[i] = -1  # 噪声
+            continue
+
+        # 开始新聚类
+        labels[i] = cluster_id
+        seed_set = list(neighbors)
+        seed_set.remove(i)
+
+        j = 0
+        while j &lt; len(seed_set):
+            q = seed_set[j]
+
+            if labels[q] == -1:
+                labels[q] = cluster_id  # 边界点
+            elif labels[q] == -2:
+                labels[q] = cluster_id
+
+                q_neighbors = neighbors_list[q]
+                if len(q_neighbors) &gt;= min_samples:
+                    # q 是核心点，扩展
+                    for n in q_neighbors:
+                        if n not in seed_set:
+                            seed_set.append(n)
+
+            j += 1
+
+        cluster_id += 1
+
+    return labels
+</code></pre>
+<h4 id="_11">参数选择</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>影响</th>
+<th>选择建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eps</td>
+<td>邻域半径</td>
+<td>使用 k-distance 图找拐点</td>
+</tr>
+<tr>
+<td>min_samples</td>
+<td>最小邻居数</td>
+<td>通常为 2×维度 = 6</td>
+</tr>
+</tbody>
+</table>
+<p><strong>k-distance 图方法：</strong></p>
+<pre><code class="language-python"># 计算每个点到第 k 近邻的距离
+distances, _ = tree.query(points, k=min_samples)
+k_distances = distances[:, -1]
+k_distances.sort()
+
+# 绘制并找拐点
+plt.plot(k_distances)
+plt.ylabel(f'{min_samples}-NN distance')
+</code></pre>
+<h3 id="43">4.3 边界框计算</h3>
+<pre><code class="language-python">def compute_bounding_boxes(points, labels):
+    &quot;&quot;&quot;
+    为每个聚类计算轴对齐包围盒 (AABB)
+
+    返回每个簇的:
+    - min_bound: 最小角点
+    - max_bound: 最大角点
+    - center: 中心点
+    - size: 尺寸
+    &quot;&quot;&quot;
+    bounding_boxes = []
+    unique_labels = np.unique(labels[labels &gt;= 0])
+
+    for cluster_id in unique_labels:
+        cluster_points = points[labels == cluster_id]
+
+        min_bound = np.min(cluster_points, axis=0)
+        max_bound = np.max(cluster_points, axis=0)
+
+        bounding_boxes.append({
+            'cluster_id': cluster_id,
+            'min_bound': min_bound,
+            'max_bound': max_bound,
+            'center': (min_bound + max_bound) / 2,
+            'size': max_bound - min_bound,
+            'num_points': len(cluster_points)
+        })
+
+    return bounding_boxes
+</code></pre>
+<hr />
+<h2 id="_12">第五章：系统架构</h2>
+<h3 id="51">5.1 模块划分</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                        MainWindow                            │
+│  ┌─────────────────────────────┐  ┌──────────────────────┐  │
+│  │        GLWidget             │  │   Control Panels     │  │
+│  │  ┌───────────────────────┐  │  │  ┌────────────────┐  │  │
+│  │  │       Scene           │  │  │  │ Scan Params    │  │  │
+│  │  │  ┌─────┐ ┌─────────┐  │  │  │  └────────────────┘  │  │
+│  │  │  │Cam  │ │Pipeline │  │  │  │  ┌────────────────┐  │  │
+│  │  │  └─────┘ │Result   │  │  │  │  │ Pipeline Panel │  │  │
+│  │  │  ┌────────────────┐ │  │  │  └────────────────┘  │  │
+│  │  │  │   Environment  │ │  │  └──────────────────────┘  │
+│  │  │  └────────────────┘ │  │                            │
+│  │  └───────────────────────┘  │                            │
+│  └─────────────────────────────┘                            │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="52">5.2 数据流</h3>
+<pre><code>环境物体 ──► 射线投射 ──► 原始点云
+                              │
+                              ▼
+                         体素下采样
+                              │
+                              ▼
+                         DBSCAN聚类
+                              │
+                              ▼
+                      边界框 + 可视化
+</code></pre>
+<hr />
+<h2 id="_13">第六章：实验指导</h2>
+<h3 id="61">6.1 环境配置</h3>
+<pre><code class="language-bash"># 创建虚拟环境
+python -m venv venv
+source venv/bin/activate
+
+# 安装依赖
+pip install PyQt5 PyOpenGL numpy scipy
+</code></pre>
+<h3 id="62">6.2 运行程序</h3>
+<pre><code class="language-bash">python main.py
+</code></pre>
+<h3 id="63">6.3 实验内容</h3>
+<h4 id="_14">实验一：下采样效果对比</h4>
+<table>
+<thead>
+<tr>
+<th>体素大小</th>
+<th>原始点数</th>
+<th>下采样后</th>
+<th>保留比例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1m</td>
+<td>~5760</td>
+<td>~1200</td>
+<td>21%</td>
+</tr>
+<tr>
+<td>0.2m</td>
+<td>~5760</td>
+<td>~400</td>
+<td>7%</td>
+</tr>
+<tr>
+<td>0.5m</td>
+<td>~5760</td>
+<td>~100</td>
+<td>2%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>观察要点：</strong>
+- 体素越大，点数越少
+- 过大的体素会丢失物体细节</p>
+<h4 id="_15">实验二：聚类参数调优</h4>
+<table>
+<thead>
+<tr>
+<th>eps</th>
+<th>min_samples</th>
+<th>簇数</th>
+<th>噪声点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.3</td>
+<td>5</td>
+<td>15+</td>
+<td>多</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>5</td>
+<td>7-8</td>
+<td>少</td>
+</tr>
+<tr>
+<td>1.0</td>
+<td>5</td>
+<td>3-4</td>
+<td>很少</td>
+</tr>
+</tbody>
+</table>
+<p><strong>观察要点：</strong>
+- eps 太小：过度分割，噪声多
+- eps 太大：不同物体被合并
+- min_samples 影响噪声判定</p>
+<h4 id="_16">实验三：多阶段流程</h4>
+<ol>
+<li>观察原始点云（按物体类型着色）</li>
+<li>切换到下采样阶段，观察点数减少</li>
+<li>切换到聚类阶段，观察：</li>
+<li>不同物体被分到不同簇</li>
+<li>噪声点显示为灰色</li>
+<li>边界框包围每个簇</li>
+</ol>
+<h3 id="64">6.4 思考题</h3>
+<ol>
+<li><strong>下采样</strong></li>
+<li>体素网格下采样与随机下采样各有什么优缺点？</li>
+<li>
+<p>如何选择合适的体素大小？</p>
+</li>
+<li>
+<p><strong>聚类</strong></p>
+</li>
+<li>DBSCAN 与 K-Means 有什么区别？</li>
+<li>为什么 DBSCAN 能识别噪声点？</li>
+<li>
+<p>如何确定最优的 eps 和 min_samples？</p>
+</li>
+<li>
+<p><strong>应用</strong></p>
+</li>
+<li>聚类结果如何用于目标检测？</li>
+<li>边界框信息如何帮助路径规划？</li>
+</ol>
+<hr />
+<h2 id="_17">第七章：关键代码示例</h2>
+<h3 id="71">7.1 完整处理流程</h3>
+<pre><code class="language-python"># 1. 生成原始点云
+scene.generate_point_cloud()
+raw_points = scene.get_raw_point_cloud()
+
+# 2. 创建处理流水线
+pipeline = ProcessingPipeline()
+pipeline.set_raw_point_cloud(raw_points)
+
+# 3. 下采样
+pipeline.set_voxel_size(0.2)
+pipeline.process_downsampling()
+downsampled = pipeline.downsampled_result.point_cloud
+
+# 4. 聚类
+pipeline.set_eps(0.5)
+pipeline.set_min_samples(5)
+pipeline.process_clustering()
+clustered = pipeline.clustered_result
+
+# 5. 获取结果
+labels = clustered.cluster_labels
+bounding_boxes = clustered.bounding_boxes
+print(f&quot;发现 {len(bounding_boxes)} 个簇&quot;)
+</code></pre>
+<h3 id="72">7.2 可视化着色</h3>
+<pre><code class="language-python">def draw_clustered_point_cloud(points, labels):
+    &quot;&quot;&quot;绘制聚类后的点云&quot;&quot;&quot;
+    colors = get_cluster_colors(num_clusters)
+
+    glBegin(GL_POINTS)
+    for i, (point, label) in enumerate(zip(points, labels)):
+        if label &lt; 0:
+            glColor4f(0.5, 0.5, 0.5, 0.7)  # 噪声 - 灰色
+        else:
+            color = colors[label]
+            glColor4f(color[0], color[1], color[2], 0.9)
+
+        glVertex3f(point[0], point[1], point[2])
+    glEnd()
+</code></pre>
+<hr />
+<h2 id="_18">附录：参考资料</h2>
+<h3 id="a">A. 推荐阅读</h3>
+<ol>
+<li><strong>点云处理</strong></li>
+<li>《Point Cloud Library》文档</li>
+<li>
+<p>Open3D 官方教程</p>
+</li>
+<li>
+<p><strong>聚类算法</strong></p>
+</li>
+<li>《Pattern Classification》- Duda</li>
+<li>
+<p>DBSCAN 原论文: Ester et al., 1996</p>
+</li>
+<li>
+<p><strong>激光雷达</strong></p>
+</li>
+<li>Velodyne LiDAR 官方文档</li>
+<li>《Self-Driving Cars》- Coursera</li>
+</ol>
+<h3 id="b">B. 在线资源</h3>
+<ul>
+<li>Open3D: http://www.open3d.org/</li>
+<li>PCL: https://pointclouds.org/</li>
+<li>scikit-learn DBSCAN: https://scikit-learn.org/stable/modules/clustering.html#dbscan</li>
+</ul>
+<hr />
+<h2 id="_19">附录：快捷键参考</h2>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>R</code></td>
+<td>重置视角</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>俯视图</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>正视图</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>侧视图</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>透视图</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>等轴视图</td>
+</tr>
+<tr>
+<td><code>ESC</code></td>
+<td>退出程序</td>
+</tr>
+<tr>
+<td>鼠标左键拖拽</td>
+<td>旋转视角</td>
+</tr>
+<tr>
+<td>鼠标滚轮</td>
+<td>缩放</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>本教材配套项目：点云处理仿真系统</em></p>
+<p><em>最后更新：2026年2月</em></p>
+</body>
+</html>
